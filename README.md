@@ -34,7 +34,8 @@ Este repositório contém apenas o **frontend**. Os dados são consumidos de uma
 
 - **Node.js** compatível com o Angular 22 (o projeto foi validado com Node 24)
 - **npm**
-- **API PHP** disponível em `http://localhost/apis-revendedora` (ex.: XAMPP/Apache + MySQL)
+- **PHP 8+** com PDO MySQL e **MySQL/MariaDB** (ex.: XAMPP)
+- **API PHP** em execução em `http://localhost/apis-revendedora` — os arquivos estão em [`api/`](api/) e podem ser copiados para o `htdocs`
 
 ## Como executar
 
@@ -47,6 +48,26 @@ npm start
 ```
 
 Acesse <http://localhost:4200>. Sem sessão ativa, a aplicação redireciona para `/login`.
+
+## Backend (API PHP)
+
+O backend está em [`api/`](api/) e o schema do banco em [`database/schema.sql`](database/schema.sql).
+
+### Instalação
+
+1. **Banco de dados** — importe `database/schema.sql` no MySQL (phpMyAdmin ou `mysql -u root -p < database/schema.sql`).
+2. **Usuário administrador** — o login precisa ser exatamente `admin` (definido em `api/comum.php`). Gere o hash da senha e cadastre:
+   ```bash
+   php -r "echo password_hash('SUA_SENHA', PASSWORD_DEFAULT), PHP_EOL;"
+   ```
+   ```sql
+   INSERT INTO tb_usuario (login, senha) VALUES ('admin', '<hash gerado>');
+   ```
+3. **Arquivos da API** — copie a pasta `api/` para o Apache, por exemplo `C:\xampp\htdocs\apis-revendedora`.
+4. **Credenciais** — copie `api/config.local.example.php` para `api/config.local.php` (na pasta publicada no `htdocs`) e ajuste host, banco, usuário e senha. Alternativamente, use as variáveis de ambiente `DB_HOST`, `DB_NAME`, `DB_USER` e `DB_PASSWORD`.
+5. **CORS/sessão** — as origens permitidas estão em `api/comum.php` (`http://localhost:4200` e `http://127.0.0.1:4200`).
+
+> `api/config.local.php` está no `.gitignore` e não deve ser publicado.
 
 ## Configuração da API
 
@@ -62,7 +83,7 @@ A API precisa aceitar requisições com credenciais (CORS com `Access-Control-Al
 
 ### Banco de dados
 
-O banco de dados (MySQL) é gerenciado pela API PHP e **não faz parte deste repositório**. Configure-o no servidor da API; esta aplicação acessa os dados apenas via HTTP, sem conexão direta com o banco.
+O schema está em [`database/schema.sql`](database/schema.sql). O Angular não acessa o banco diretamente: todas as operações passam pela API PHP em `api/`.
 
 ### Endpoints utilizados
 
@@ -94,6 +115,8 @@ O banco de dados (MySQL) é gerenciado pela API PHP e **não faz parte deste rep
 ## Estrutura do projeto
 
 ```
+api/                       # Backend PHP (copiar para htdocs/apis-revendedora)
+database/schema.sql        # Estrutura do banco MySQL
 src/app/
 ├── login/                 # Autenticação
 ├── cadastro-usuario/      # Cadastro de usuários
