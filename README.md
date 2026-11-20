@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="public/images/logo.png" alt="Daly Motors" width="220">
+  <img src="public/images/logo.png" alt="RevCar" width="220">
 </p>
 
-# Daly Motors — Sistema de Revenda de Veículos
+# RevCar — Sistema de Revenda de Veículos
 
 Frontend em **Angular 22** para o gerenciamento de uma revenda de veículos. A aplicação permite autenticar usuários, cadastrar veículos, marcas, modelos e acessórios, associar acessórios aos veículos e consultar o estoque com busca.
 
@@ -59,6 +59,10 @@ export const API = 'http://localhost/apis-revendedora';
 > As telas de **login** e **cadastro de usuário** definem a URL completa diretamente nos componentes (`src/app/login/login.ts` e `src/app/cadastro-usuario/cadastro-usuario.ts`). Ao apontar para outro servidor, atualize esses dois arquivos também.
 
 A API precisa aceitar requisições com credenciais (CORS com `Access-Control-Allow-Credentials: true` e origem `http://localhost:4200`) para que o cookie de sessão funcione.
+
+### Banco de dados
+
+O banco de dados (MySQL) é gerenciado pela API PHP e **não faz parte deste repositório**. Configure-o no servidor da API; esta aplicação acessa os dados apenas via HTTP, sem conexão direta com o banco.
 
 ### Endpoints utilizados
 
