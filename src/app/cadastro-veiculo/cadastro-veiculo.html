@@ -1,0 +1,93 @@
+<app-menu />
+
+<div class="content">
+  <div class="form-container larga">
+    <h1>Cadastro de veículo</h1>
+    <p>Informe os dados do veículo</p>
+
+    <form (ngSubmit)="enviarFormulario()">
+      <div class="grade">
+        <div>
+          <label for="id_marca">marca:</label>
+          <select id="id_marca" name="id_marca" [(ngModel)]="id_marca" (ngModelChange)="aoMudarMarca()">
+            <option [ngValue]="null" disabled>Selecione a marca</option>
+            @for (marca of marcas; track marca.id_marca) {
+              <option [ngValue]="marca.id_marca">{{ marca.nome }}</option>
+            }
+          </select>
+        </div>
+
+        <div>
+          <label for="id_modelo">modelo:</label>
+          <select id="id_modelo" name="id_modelo" [(ngModel)]="id_modelo" [disabled]="id_marca === null">
+            <option [ngValue]="null" disabled>Selecione o modelo</option>
+            @for (modelo of modelos; track modelo.id_modelo) {
+              <option [ngValue]="modelo.id_modelo">{{ modelo.nome }}</option>
+            }
+          </select>
+        </div>
+
+        @if (marcas.length === 0) {
+          <p class="dica inteira">Nenhuma marca cadastrada. Cadastre uma marca e um modelo primeiro.</p>
+        } @else if (id_marca !== null && modelos.length === 0) {
+          <p class="dica inteira">Essa marca ainda não tem modelos cadastrados.</p>
+        }
+
+        <div>
+          <label for="placa">placa:</label>
+          <input type="text" id="placa" name="placa" [(ngModel)]="placa" maxlength="8" placeholder="ABC1D23">
+        </div>
+
+        <div>
+          <label for="chassi">chassi (17 caracteres):</label>
+          <input type="text" id="chassi" name="chassi" [(ngModel)]="chassi" maxlength="17">
+        </div>
+
+        <div>
+          <label for="cor">cor:</label>
+          <input type="text" id="cor" name="cor" [(ngModel)]="cor" maxlength="30">
+        </div>
+
+        <div>
+          <label for="ano">ano:</label>
+          <input type="number" id="ano" name="ano" [(ngModel)]="ano" min="1900" step="1">
+        </div>
+
+        <div>
+          <label for="quilometragem">quilometragem:</label>
+          <input type="number" id="quilometragem" name="quilometragem" [(ngModel)]="quilometragem" min="0" step="1">
+        </div>
+
+        <div>
+          <label for="valor">valor (R$):</label>
+          <input type="number" id="valor" name="valor" [(ngModel)]="valor" min="0" step="0.01">
+        </div>
+
+        <div class="inteira">
+          <label for="situacao">situação:</label>
+          <select id="situacao" name="situacao" [(ngModel)]="situacao">
+            <option value="" disabled>Selecione a situação</option>
+            @for (s of situacoes; track s) {
+              <option [value]="s">{{ s }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      @if (erro) {
+        <p class="erro" role="alert">{{ erro }}</p>
+      }
+
+      @if (sucesso) {
+        <p class="sucesso" role="status">{{ sucesso }}</p>
+      }
+
+      <button type="submit" [disabled]="salvando">{{ salvando ? 'Salvando...' : 'Cadastrar veículo' }}</button>
+    </form>
+
+    @if (ultimoId) {
+      <p>Deseja adicionar acessórios ao veículo que acabou de cadastrar?</p>
+      <button type="button" (click)="vincularAcessorios()">Adicionar acessórios</button>
+    }
+  </div>
+</div>

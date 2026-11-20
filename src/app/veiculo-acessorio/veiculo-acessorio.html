@@ -1,0 +1,55 @@
+<app-menu />
+
+<div class="content">
+  <div class="form-container larga">
+    <h1>Veículo / Acessório</h1>
+    <p>Escolha o veículo e marque os acessórios que ele possui</p>
+
+    <form (ngSubmit)="salvar()">
+      <label for="id_carro">veículo:</label>
+      <select id="id_carro" name="id_carro" [(ngModel)]="id_carro" (ngModelChange)="aoSelecionarVeiculo()">
+        <option [ngValue]="null" disabled>Selecione o veículo</option>
+        @for (v of veiculos; track v.id_carro) {
+          <option [ngValue]="v.id_carro">{{ v.marca }} {{ v.modelo }} {{ v.ano }} — {{ v.placa }}</option>
+        }
+      </select>
+
+      @if (veiculos.length === 0) {
+        <p class="dica">Nenhum veículo cadastrado ainda. Cadastre um veículo primeiro.</p>
+      }
+
+      @if (id_carro !== null) {
+        <label>acessórios:</label>
+
+        @if (acessorios.length === 0) {
+          <p class="dica">Nenhum acessório cadastrado ainda. Cadastre um acessório primeiro.</p>
+        } @else {
+          <div class="acessorios-marcar">
+            @for (a of acessorios; track a.id_acessorio) {
+              <label class="marcar">
+                <input type="checkbox" #chk
+                       [checked]="selecionados.has(a.id_acessorio)"
+                       (change)="alternar(a.id_acessorio, chk.checked)">
+                {{ a.nome }}
+              </label>
+            }
+          </div>
+        }
+      }
+
+      @if (erro) {
+        <p class="erro" role="alert">{{ erro }}</p>
+      }
+
+      @if (sucesso) {
+        <p class="sucesso" role="status">{{ sucesso }}</p>
+      }
+
+      <button type="submit" [disabled]="salvando || id_carro === null">{{ salvando ? 'Salvando...' : 'Salvar acessórios' }}</button>
+    </form>
+
+    <p>Precisa cadastrar algo antes?</p>
+    <button type="button" (click)="irParaAcessorio()">Cadastrar acessório</button>
+    <button type="button" class="separado" (click)="irParaVeiculo()">Cadastrar veículo</button>
+  </div>
+</div>

@@ -1,0 +1,19 @@
+<header class="topo">
+  <a class="logo" routerLink="/veiculos"><img src="images/logo.png" alt="Daly Motors"></a>
+
+  <nav class="links">
+    <a routerLink="/veiculos" routerLinkActive="ativo">Veículos</a>
+    <a routerLink="/cadastro-veiculo" routerLinkActive="ativo">Cadastrar veículo</a>
+    <a routerLink="/cadastro-acessorio" routerLinkActive="ativo">Acessórios</a>
+    <a routerLink="/veiculo-acessorio" routerLinkActive="ativo">Veículo/Acessório</a>
+    <a routerLink="/cadastro-marca" routerLinkActive="ativo">Marcas e modelos</a>
+    <a routerLink="/cadastro-modelo" routerLinkActive="ativo">Novo modelo</a>
+  </nav>
+
+  <div class="usuario">
+    @if (auth.usuario?.login) {
+      <span>{{ auth.usuario?.login }}@if (auth.usuario?.admin) { <small>admin</small> }</span>
+    }
+    <button type="button" (click)="sair()">Sair</button>
+  </div>
+</header>

@@ -1,0 +1,89 @@
+<app-menu />
+
+<main class="content">
+  <section class="form-container">
+    <h1>Cadastro de marca</h1>
+    <p>Informe a marca do veículo</p>
+
+    <form (ngSubmit)="enviarFormulario()">
+      <label for="nome">Nome da marca:</label>
+      <input type="text" id="nome" name="nome" [(ngModel)]="nome" maxlength="50" required>
+
+      @if (erro) { <p class="erro" role="alert">{{ erro }}</p> }
+      @if (sucesso) { <p class="sucesso" role="status">{{ sucesso }}</p> }
+
+      <button type="submit">Cadastrar marca</button>
+    </form>
+
+    <p class="separador-texto">Quer cadastrar um modelo?</p>
+    <button type="button" (click)="irParaModelo()">Cadastrar modelo</button>
+  </section>
+
+  <section class="lista-container">
+    <h2>Marcas e modelos cadastrados</h2>
+
+    @if (marcas.length === 0) {
+      <p class="vazio">Nenhuma marca cadastrada.</p>
+    } @else {
+      @for (marca of marcas; track marca.id_marca) {
+        <article class="marca-item">
+          <div class="marca-cabecalho">
+            <div>
+              <h3>{{ marca.nome }}</h3>
+              <span>{{ marca.modelos.length }} modelo(s)</span>
+            </div>
+            @if (admin) {
+              <button class="botao-excluir" type="button" (click)="excluirMarca(marca)">Excluir marca</button>
+            }
+          </div>
+
+          @if (marca.modelos.length) {
+            <ul class="modelos">
+              @for (modelo of marca.modelos; track modelo.id_modelo) {
+                <li>
+                  <span>{{ modelo.nome }}</span>
+                  @if (admin) {
+                    <button class="botao-excluir pequeno" type="button" (click)="excluirModelo(modelo)">Excluir</button>
+                  }
+                </li>
+              }
+            </ul>
+          } @else {
+            <p class="sem-modelos">Nenhum modelo cadastrado.</p>
+          }
+        </article>
+      }
+    }
+  </section>
+</main>
+
+@if (alvo) {
+  <div class="modal-fundo" role="presentation">
+    <section class="modal-confirmacao" role="dialog" aria-modal="true" aria-labelledby="titulo-confirmacao">
+      <h2 id="titulo-confirmacao">Confirmar exclusão</h2>
+      <p>Você está prestes a excluir {{ alvo.tipo === 'marca' ? 'a marca' : 'o modelo' }} <strong>{{ alvo.nome }}</strong>.</p>
+
+      <div class="aviso-exclusao">
+        @if (alvo.tipo === 'marca') {
+          Serão excluídos também {{ alvo.modelos }} modelo(s) e {{ alvo.veiculos }} veículo(s) dessa marca, com os vínculos de acessórios desses veículos.
+        } @else {
+          Serão excluídos também {{ alvo.veiculos }} veículo(s) desse modelo, com os vínculos de acessórios desses veículos.
+        }
+        Os acessórios cadastrados serão mantidos. Essa ação não poderá ser desfeita.
+      </div>
+
+      <label for="senhaAdmin">Digite sua senha de administrador:</label>
+      <input id="senhaAdmin" name="senhaAdmin" type="password" [(ngModel)]="senhaAdmin"
+             autocomplete="current-password" (keyup.enter)="confirmarExclusao()">
+
+      @if (erroExclusao) { <p class="erro" role="alert">{{ erroExclusao }}</p> }
+
+      <div class="botoes-modal">
+        <button type="button" class="botao-cancelar" (click)="cancelarExclusao()" [disabled]="processandoExclusao">Cancelar</button>
+        <button type="button" class="botao-confirmar" (click)="confirmarExclusao()" [disabled]="processandoExclusao">
+          {{ processandoExclusao ? 'Excluindo...' : 'Confirmar exclusão' }}
+        </button>
+      </div>
+    </section>
+  </div>
+}

@@ -1,59 +1,117 @@
-# Project
+<p align="center">
+  <img src="public/images/logo.png" alt="Daly Motors" width="220">
+</p>
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.2.3.
+# Daly Motors — Sistema de Revenda de Veículos
 
-## Development server
+Frontend em **Angular 22** para o gerenciamento de uma revenda de veículos. A aplicação permite autenticar usuários, cadastrar veículos, marcas, modelos e acessórios, associar acessórios aos veículos e consultar o estoque com busca.
 
-To start a local development server, run:
+Este repositório contém apenas o **frontend**. Os dados são consumidos de uma API PHP/MySQL executada separadamente.
 
-```bash
-ng serve
-```
+## Funcionalidades
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+- **Login e sessão** — autenticação via API PHP, com o cookie de sessão enviado em todas as requisições (`withCredentials`).
+- **Cadastro de usuários** — criação de conta com validação de senha.
+- **Listagem de veículos** — estoque com busca por marca, modelo, placa, cor, situação ou acessório, e destaque visual para veículos avariados.
+- **Cadastro de veículos** — seleção de marca com carregamento dinâmico dos modelos correspondentes.
+- **Marcas e modelos** — cadastro e exclusão; a exclusão exige a senha de um administrador.
+- **Acessórios** — cadastro e listagem.
+- **Veículo/Acessório** — marcação dos acessórios de cada veículo.
+- **Rotas protegidas** — as telas internas só são acessadas por usuários autenticados (`authGuard`).
 
-## Code scaffolding
+## Tecnologias
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+| Tecnologia | Uso |
+| --- | --- |
+| Angular 22 | Framework da SPA |
+| TypeScript 6 | Linguagem |
+| Angular Router | Navegação e proteção de rotas |
+| RxJS | Comunicação assíncrona |
+| Vitest | Testes unitários |
+| Prettier | Formatação de código |
 
-```bash
-ng generate component component-name
-```
+## Pré-requisitos
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+- **Node.js** compatível com o Angular 22 (o projeto foi validado com Node 24)
+- **npm**
+- **API PHP** disponível em `http://localhost/apis-revendedora` (ex.: XAMPP/Apache + MySQL)
 
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+## Como executar
 
 ```bash
-ng test
+# instalar as dependências
+npm install
+
+# iniciar o servidor de desenvolvimento
+npm start
 ```
 
-## Running end-to-end tests
+Acesse <http://localhost:4200>. Sem sessão ativa, a aplicação redireciona para `/login`.
 
-For end-to-end (e2e) testing, run:
+## Configuração da API
 
-```bash
-ng e2e
+A URL base da API fica em [`src/app/shared/api.ts`](src/app/shared/api.ts):
+
+```ts
+export const API = 'http://localhost/apis-revendedora';
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+> As telas de **login** e **cadastro de usuário** definem a URL completa diretamente nos componentes (`src/app/login/login.ts` e `src/app/cadastro-usuario/cadastro-usuario.ts`). Ao apontar para outro servidor, atualize esses dois arquivos também.
 
-## Additional Resources
+A API precisa aceitar requisições com credenciais (CORS com `Access-Control-Allow-Credentials: true` e origem `http://localhost:4200`) para que o cookie de sessão funcione.
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+### Endpoints utilizados
+
+| Método | Endpoint | Uso |
+| --- | --- | --- |
+| POST | `/login.php` | Autenticação |
+| POST | `/cadastro_usuario.php` | Cadastro de usuário |
+| GET | `/sessao.php` | Verificação da sessão |
+| POST | `/logout.php` | Encerramento da sessão |
+| GET / POST | `/veiculo.php` | Listagem e cadastro de veículos |
+| GET / POST / DELETE | `/marca.php` | Marcas (exclusão exige senha de admin) |
+| GET / POST / DELETE | `/modelo.php` | Modelos (filtro por `id_marca`; exclusão exige senha de admin) |
+| GET / POST | `/acessorio.php` | Acessórios |
+| GET / POST | `/veiculo_acessorio.php` | Associação veículo/acessório |
+
+## Rotas
+
+| Rota | Tela | Protegida |
+| --- | --- | --- |
+| `/login` | Login | Não |
+| `/cadastro` | Cadastro de usuário | Não |
+| `/veiculos` | Listagem de veículos | Sim |
+| `/cadastro-veiculo` | Cadastro de veículo | Sim |
+| `/cadastro-acessorio` | Cadastro de acessório | Sim |
+| `/veiculo-acessorio` | Associação veículo/acessório | Sim |
+| `/cadastro-marca` | Marcas e modelos | Sim |
+| `/cadastro-modelo` | Cadastro de modelo | Sim |
+
+## Estrutura do projeto
+
+```
+src/app/
+├── login/                 # Autenticação
+├── cadastro-usuario/      # Cadastro de usuários
+├── menu/                  # Cabeçalho e navegação interna
+├── listagem-veiculos/     # Estoque com busca
+├── cadastro-veiculo/      # Cadastro de veículos
+├── cadastro-marca/        # Marcas e modelos (com exclusão restrita a admin)
+├── cadastro-modelo/       # Cadastro de modelos
+├── cadastro-acessorio/    # Cadastro de acessórios
+├── veiculo-acessorio/     # Associação veículo/acessório
+└── shared/                # API, sessão, guarda de rota e estilos comuns
+```
+
+## Scripts
+
+| Comando | Descrição |
+| --- | --- |
+| `npm start` | Servidor de desenvolvimento em `http://localhost:4200` |
+| `npm run build` | Build de produção em `dist/` |
+| `npm run watch` | Build contínuo em modo desenvolvimento |
+| `npm test` | Testes unitários com Vitest |
+
+## Autor
+
+Desenvolvido por **Daniel Vinicius** como projeto interdisciplinar da ETEC.

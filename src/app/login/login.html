@@ -1,0 +1,32 @@
+<header class="topo">
+  <a class="logo" routerLink="/">
+    <img src="images/logo.png" alt="Daly Motors">
+  </a>
+</header>
+
+<div class="content">
+  <div class="form-container">
+    <h1>Logue sua conta</h1>
+    <p>Preencha os dados abaixo</p>
+
+    <form (ngSubmit)="enviarFormulario()">
+      <label for="login">login:</label>
+      <input type="text" id="login" name="login"
+             [(ngModel)]="login" required>
+
+      <label for="password">password:</label>
+      <input type="password" id="password" name="password"
+             [(ngModel)]="password" required>
+
+      <button type="submit">Entrar</button>
+    </form>
+
+      @if (erro) {
+    <p class="erro">{{ erro }}</p>
+  }
+
+    <p>Ainda não possui uma conta?</p>
+
+    <button type="button" (click)="cadastro()">Cadastrar usuário</button>
+  </div>
+</div>

@@ -1,0 +1,52 @@
+<app-menu />
+
+<main class="content">
+  <section class="lista-container larga">
+    <h2>Veículos cadastrados</h2>
+
+    <input class="filtro" type="text" name="filtro" [(ngModel)]="filtro"
+           placeholder="Buscar por marca, modelo, placa, cor, acessório...">
+
+    @if (erro) {
+      <p class="erro" role="alert">{{ erro }}</p>
+    }
+
+    @if (veiculos.length === 0 && !erro) {
+      <p class="vazio">Nenhum veículo cadastrado.</p>
+    } @else if (filtrados.length === 0) {
+      <p class="vazio">Nenhum veículo encontrado para essa busca.</p>
+    } @else {
+      <div class="tabela-rolagem">
+        <table>
+          <thead>
+            <tr>
+              <th>Marca</th><th>Modelo</th><th>Placa</th><th>Ano</th><th>Cor</th>
+              <th>Km</th><th>Valor</th><th>Situação</th><th>Acessórios</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (v of filtrados; track v.id_carro) {
+              <tr>
+                <td>{{ v.marca }}</td>
+                <td>{{ v.modelo }}</td>
+                <td>{{ v.placa }}</td>
+                <td>{{ v.ano }}</td>
+                <td>{{ v.cor }}</td>
+                <td>{{ v.quilometragem }}</td>
+                <td>{{ moeda(v.valor) }}</td>
+                <td><span class="selo" [class.avariado]="avariado(v.situacao)">{{ v.situacao }}</span></td>
+                <td class="acess">
+                  @for (a of v.acessorios; track a) {
+                    <span class="chip">{{ a }}</span>
+                  } @empty {
+                    <span class="vazio">—</span>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</main>
