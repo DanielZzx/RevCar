@@ -8,6 +8,7 @@ interface RespostaApi {
   mensagem: string;
 }
 
+// Tela de cadastro de usuário, com validação local de senha antes de chamar a API.
 @Component({
   imports: [FormsModule, RouterLink],
   selector: 'app-cadastro-usuario',
@@ -20,6 +21,7 @@ export class CadastroUsuario {
   confirmPassword = '';
   erro = '';
 
+  // URL definida diretamente aqui (não usa shared/api.ts) — ver README.
   private readonly api = 'http://localhost/apis-revendedora/cadastro_usuario.php';
 
   constructor(
@@ -31,6 +33,7 @@ export class CadastroUsuario {
   enviarFormulario() {
     this.erro = '';
 
+    // Validações locais antes de enviar para a API.
     if (this.password.length < 5) {
       this.erro = 'A senha deve ter no mínimo 5 caracteres.';
       return;
@@ -41,10 +44,12 @@ export class CadastroUsuario {
       return;
     }
 
+    // O cadastro envia o campo "password" (o login.php usa "senha").
     this.http
       .post<RespostaApi>(this.api, { login: this.login, password: this.password })
       .subscribe({
         next: (res) => {
+          // Cadastro concluído: informa o usuário e volta para o login.
           alert(res.mensagem);
           this.router.navigate(['/login']);
         },

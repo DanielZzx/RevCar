@@ -18,6 +18,7 @@ interface AlvoExclusao {
   veiculos: number;
 }
 
+// Marcas e modelos: cadastra marcas e permite ao administrador excluir marcas ou modelos.
 @Component({
   imports: [FormsModule, Menu],
   selector: 'app-cadastro-marca',
@@ -28,6 +29,7 @@ export class CadastroMarca implements OnInit {
   nome = '';
   erro = '';
   sucesso = '';
+  // Indica se o usuário logado é administrador; retornado por marca.php.
   admin = false;
   marcas: Marca[] = [];
 
@@ -43,6 +45,7 @@ export class CadastroMarca implements OnInit {
 
   ngOnInit() { this.carregarMarcas(); }
 
+  // A API devolve as marcas já com seus modelos aninhados.
   carregarMarcas() {
     this.http.get<RespostaApi>(this.apiMarca).subscribe({
       next: (res) => {
@@ -79,6 +82,7 @@ export class CadastroMarca implements OnInit {
     this.abrirConfirmacao({ tipo: 'modelo', id: m.id_modelo, nome: m.nome, modelos: 0, veiculos: m.veiculos });
   }
 
+  // Prepara o modal de confirmação de exclusão (exige senha de administrador).
   private abrirConfirmacao(alvo: AlvoExclusao) {
     this.alvo = alvo;
     this.senhaAdmin = '';
@@ -95,6 +99,7 @@ export class CadastroMarca implements OnInit {
     if (!this.alvo) return;
     if (!this.senhaAdmin) { this.erroExclusao = 'Digite a senha do administrador para confirmar.'; return; }
 
+    // A senha do administrador vai no corpo do DELETE; a API decide qual recurso excluir.
     const url = this.alvo.tipo === 'marca' ? this.apiMarca : this.apiModelo;
     this.processandoExclusao = true;
     this.erroExclusao = '';

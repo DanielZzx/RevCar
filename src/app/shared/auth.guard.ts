@@ -3,7 +3,8 @@ import { CanActivateFn, Router } from '@angular/router';
 import { catchError, map, of } from 'rxjs';
 import { AuthService } from './auth.service';
 
-// Só deixa entrar nas telas internas quem está logado; os demais vão para o login.
+// Guard de rota: consulta a sessão na API antes de liberar as telas internas.
+// Usuário deslogado ou falha de comunicação redirecionam para /login.
 export const authGuard: CanActivateFn = () => {
   const auth = inject(AuthService);
   const router = inject(Router);

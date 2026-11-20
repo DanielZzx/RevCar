@@ -10,7 +10,7 @@ import { ListagemVeiculos } from './listagem-veiculos/listagem-veiculos';
 import { authGuard } from './shared/auth.guard';
 
 export const routes: Routes = [
-  // A primeira página é sempre o login
+  // Rotas públicas: a primeira página é sempre o login.
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: Login },
   { path: 'cadastro', component: CadastroUsuario },
@@ -23,5 +23,6 @@ export const routes: Routes = [
   { path: 'cadastro-marca', component: CadastroMarca, canActivate: [authGuard] },
   { path: 'cadastro-modelo', component: CadastroModelo, canActivate: [authGuard] },
 
+  // Rota coringa: qualquer caminho desconhecido volta para o login.
   { path: '**', redirectTo: 'login' }
 ];

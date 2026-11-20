@@ -9,6 +9,7 @@ interface Marca { id_marca: number; nome: string; }
 interface Modelo { id_modelo: number; nome: string; }
 interface RespostaApi { sucesso: boolean; mensagem: string; id_carro?: number; }
 
+// Cadastro de veículo: carrega as marcas, busca os modelos da marca escolhida e envia o formulário.
 @Component({
   imports: [FormsModule, Menu],
   selector: 'app-cadastro-veiculo',
@@ -39,12 +40,14 @@ export class CadastroVeiculo implements OnInit {
   constructor(private http: HttpClient, private router: Router, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
+    // Carrega as marcas para o primeiro select.
     this.http.get<{ marcas: Marca[] }>(`${API}/marca.php`).subscribe({
       next: (res) => { this.marcas = res.marcas; this.cdr.markForCheck(); },
       error: () => { this.erro = 'Não foi possível carregar as marcas.'; this.cdr.markForCheck(); },
     });
   }
 
+  // Ao trocar a marca, limpa o modelo selecionado e busca os modelos correspondentes.
   aoMudarMarca() {
     this.id_modelo = null;
     this.modelos = [];
@@ -60,6 +63,7 @@ export class CadastroVeiculo implements OnInit {
     this.sucesso = '';
     this.ultimoId = null;
 
+    // Validação mínima no cliente; a API também valida os dados.
     if (this.id_modelo === null) { this.erro = 'Selecione a marca e o modelo.'; return; }
     if (!this.placa.trim() || !this.chassi.trim() || !this.cor.trim() || !this.situacao
         || this.ano === null || this.quilometragem === null || this.valor === null) {
@@ -80,6 +84,7 @@ export class CadastroVeiculo implements OnInit {
     }).subscribe({
       next: (res) => {
         this.sucesso = res.mensagem;
+        // Guarda o id retornado para oferecer o atalho de vincular acessórios.
         this.ultimoId = res.id_carro ?? null;
         this.placa = ''; this.chassi = ''; this.cor = '';
         this.ano = null; this.quilometragem = null; this.valor = null; this.situacao = '';
@@ -94,6 +99,7 @@ export class CadastroVeiculo implements OnInit {
     });
   }
 
+  // Abre a tela de associação já com o veículo recém-cadastrado selecionado.
   vincularAcessorios() {
     this.router.navigate(['/veiculo-acessorio'], { queryParams: { id_carro: this.ultimoId } });
   }

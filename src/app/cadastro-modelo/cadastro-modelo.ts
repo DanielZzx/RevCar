@@ -20,6 +20,7 @@ interface RespostaMarcas {
   marcas: Marca[];
 }
 
+// Cadastro de modelo: o modelo é sempre vinculado a uma marca existente.
 @Component({
   imports: [FormsModule, Menu],
   selector: 'app-cadastro-modelo',
@@ -46,6 +47,7 @@ export class CadastroModelo implements OnInit {
     this.carregarMarcas();
   }
 
+  // Carrega as marcas disponíveis para o select.
   carregarMarcas() {
     this.http.get<RespostaMarcas>(this.apiMarca).subscribe({
       next: (res) => {
@@ -65,6 +67,7 @@ export class CadastroModelo implements OnInit {
 
     const nome = this.nome.trim();
 
+    // Validação local antes de enviar para a API.
     if (this.id_marca === null) {
       this.erro = 'Selecione a marca.';
       return;

@@ -10,6 +10,7 @@ interface Veiculo {
   marca: string; modelo: string; acessorios: string[];
 }
 
+// Tela de estoque: carrega os veículos da API e permite filtrar a lista em memória.
 @Component({
   imports: [FormsModule, Menu],
   selector: 'app-listagem-veiculos',
@@ -24,12 +25,14 @@ export class ListagemVeiculos implements OnInit {
   constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
+    // Busca o estoque ao abrir a tela.
     this.http.get<{ veiculos: Veiculo[] }>(`${API}/veiculo.php`).subscribe({
       next: (res) => { this.veiculos = res.veiculos; this.cdr.markForCheck(); },
       error: () => { this.erro = 'Não foi possível carregar os veículos.'; this.cdr.markForCheck(); },
     });
   }
 
+  // Filtro aplicado no cliente sobre marca, modelo, placa, cor, situação e acessórios.
   get filtrados(): Veiculo[] {
     const t = this.filtro.trim().toLowerCase();
     if (!t) return this.veiculos;
@@ -38,10 +41,12 @@ export class ListagemVeiculos implements OnInit {
     );
   }
 
+  // Formata o valor em Real brasileiro.
   moeda(valor: number): string {
     return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
   }
 
+  // Usado para destacar na tabela os veículos avariados.
   avariado(situacao: string): boolean {
     return situacao.includes('avariado');
   }

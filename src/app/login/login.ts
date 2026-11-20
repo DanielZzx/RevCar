@@ -8,6 +8,7 @@ interface RespostaApi {
   mensagem: string;
 }
 
+// Tela de login: autentica na API e, em caso de sucesso, abre a listagem de veículos.
 @Component({
   imports: [FormsModule, RouterLink],
   selector: 'app-login',
@@ -19,6 +20,7 @@ export class Login {
   password = '';
   erro = '';
 
+  // URL definida diretamente aqui (não usa shared/api.ts) — ver README.
   private readonly api = 'http://localhost/apis-revendedora/login.php';
 
   constructor(
@@ -28,16 +30,20 @@ export class Login {
   ) {}
 
   enviarFormulario() {
+    // Limpa o erro da tentativa anterior.
     this.erro = '';
 
     this.http
       .post<RespostaApi>(this.api, { login: this.login, senha: this.password }, { withCredentials: true })
       .subscribe({
         next: () => {
+          // Login aceito: a API já definiu o cookie de sessão.
           this.router.navigate(['/veiculos']);
         },
         error: (e) => {
+          // Mostra a mensagem enviada pela API ou uma mensagem genérica.
           this.erro = e.error?.mensagem ?? 'Erro ao conectar com o servidor.';
+          // A resposta HTTP chega fora do ciclo do Angular; sinaliza a atualização da tela.
           this.cdr.markForCheck();
         },
       });

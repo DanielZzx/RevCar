@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
+// Componente raiz: apenas hospeda o <router-outlet>, onde as telas são renderizadas.
 @Component({
   selector: 'app-root',
   standalone: true,

@@ -9,6 +9,7 @@ interface Veiculo { id_carro: number; placa: string; marca: string; modelo: stri
 interface Acessorio { id_acessorio: number; nome: string; }
 interface RespostaApi { sucesso: boolean; mensagem: string; }
 
+// Associação entre veículo e acessórios: carrega as opções, permite marcar/desmarcar e salvar.
 @Component({
   imports: [FormsModule, Menu],
   selector: 'app-veiculo-acessorio',
@@ -19,6 +20,7 @@ export class VeiculoAcessorio implements OnInit {
   veiculos: Veiculo[] = [];
   acessorios: Acessorio[] = [];
   id_carro: number | null = null;
+  // Set evita duplicatas e facilita marcar/desmarcar acessórios.
   selecionados = new Set<number>();
 
   erro = '';
@@ -35,6 +37,7 @@ export class VeiculoAcessorio implements OnInit {
   ) {}
 
   ngOnInit() {
+    // Carrega as opções de acessórios e os veículos disponíveis.
     this.http.get<{ acessorios: Acessorio[] }>(`${API}/acessorio.php`).subscribe({
       next: (res) => { this.acessorios = res.acessorios; this.cdr.markForCheck(); },
       error: () => { this.erro = 'Não foi possível carregar os acessórios.'; this.cdr.markForCheck(); },
@@ -43,6 +46,7 @@ export class VeiculoAcessorio implements OnInit {
     this.http.get<{ veiculos: Veiculo[] }>(`${API}/veiculo.php`).subscribe({
       next: (res) => {
         this.veiculos = res.veiculos;
+        // Se veio ?id_carro=... (atalho após cadastrar um veículo), já o seleciona.
         const id = Number(this.route.snapshot.queryParamMap.get('id_carro'));
         if (id && this.veiculos.some((v) => v.id_carro === id)) {
           this.id_carro = id;
@@ -54,6 +58,7 @@ export class VeiculoAcessorio implements OnInit {
     });
   }
 
+  // Busca os acessórios já vinculados ao veículo selecionado.
   aoSelecionarVeiculo() {
     this.erro = '';
     this.sucesso = '';
@@ -66,12 +71,14 @@ export class VeiculoAcessorio implements OnInit {
     });
   }
 
+  // Mantém o Set sincronizado com as caixas de seleção do template.
   alternar(id: number, marcado: boolean) {
     this.sucesso = '';
     if (marcado) this.selecionados.add(id);
     else this.selecionados.delete(id);
   }
 
+  // Envia a lista completa de acessórios marcados para o veículo.
   salvar() {
     this.erro = '';
     this.sucesso = '';
